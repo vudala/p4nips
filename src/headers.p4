@@ -21,10 +21,87 @@ header ethernet_h {
     bit<16> ether_type;
 }
 
-/* Custom parsed payload data*/
-struct header_t {
-    ethernet_h ethernet;
+header ipv4_t {
+    bit<4>  version;
+    bit<4>  ihl;
+    bit<8>  diffserv;
+    bit<16> totalLen;
+    bit<16> identification;
+    bit<3>  flags;
+    bit<13> fragOffset;
+    bit<8>  ttl;
+    bit<8>  protocol;
+    bit<16> hdrChecksum;
+    bit<32> srcAddr;
+    bit<32> dstAddr;
 }
+
+header tcp_t {
+    bit<16> srcPort;
+    bit<16> dstPort;
+    bit<32> seqNo;
+    bit<32> ackNo;
+    bit<4>  dataOffset;
+    bit<4>  res;
+    bit<8>  ctrl;    
+    bit<16> window;
+    bit<16> checksum;
+    bit<16> urgentPtr;
+}
+
+header Tcp_option_end_h {
+    bit<8> kind;
+}
+header Tcp_option_nop_h {
+    bit<8> kind;
+}
+header Tcp_option_ss_h {
+    bit<8>  kind;
+    bit<32> maxSegmentSize;
+}
+header Tcp_option_s_h {
+    bit<8>  kind;
+    bit<24> scale;
+}
+header Tcp_option_sack_h {
+    bit<8>         kind;
+    bit<8>         length;
+    varbit<256>    sack;
+}
+header_union Tcp_option_h {
+    Tcp_option_end_h  end;
+    Tcp_option_nop_h  nop;
+    Tcp_option_ss_h   ss;
+    Tcp_option_s_h    s;
+    Tcp_option_sack_h sack;
+}
+
+// Defines a stack of 10 tcp options
+typedef Tcp_option_h[10] Tcp_option_stack;
+
+header Tcp_option_padding_h {
+    varbit<256> padding;
+}
+
+header rule_1 {
+    bit<624> pad1;  // 78 bytes
+    bit<32> vul1;   // 4 bytes
+    bit<8> pad2;    // 1 byte
+    bit<24> vul2;   // 3 bytes
+    bit<8> pad3;    // 1 byte
+    bit<24> vul3;   // 3 bytes 
+}
+
+struct headers {
+    ethernet_t       ethernet;
+    ipv4_t           ipv4;
+    tcp_t            tcp;
+    Tcp_option_stack tcp_options_vec;
+    Tcp_option_padding_h tcp_options_padding;
+
+    rule_1           rule_1;
+}
+
 
 /* Custom metadata to be forwarded */
 struct metadata_t {}
