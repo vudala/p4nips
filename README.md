@@ -60,7 +60,6 @@ described.
     ```
 
 2. Access the container
-
     You can use `docker exec -ti p4studio bash` to do it.
     Or use SSH to access the container:
     ```
@@ -70,8 +69,6 @@ described.
 
 From here you can use the simulator as described in
 [Open P4 Studio](https://github.com/p4lang/open-p4studio).
-
-
 
 
 # TODO
