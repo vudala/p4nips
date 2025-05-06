@@ -15,11 +15,6 @@ a software switch or IDS.
 - Increased latency
 - More
 
-# TODO
-1. Create parser for IP -> TCP -> HTTP
-2. Implement the single rule in rules/snort.rules
-
-
 # Reference articles
 
 - https://arxiv.org/abs/2411.17987
@@ -42,3 +37,44 @@ Follow this tutorial to understand the basics up to advanced P4 programming
 
 Specification of a P4 programmable switch
 - https://p4.org/wp-content/uploads/2024/10/P4-16-spec-v1.2.5.html
+
+
+# Tofino simulator
+
+I have compiled and created a Docker image with
+[Open P4 Studio](https://github.com/p4lang/open-p4studio) in it.
+It simulates a Tofino switch that can be used to homolagate your P4 programs.
+
+The source code of the image is in 
+[this repo](https://github.com/vudala/docker-open-p4studio).
+
+## Running 
+
+There is a `docker-compose.yml` in this repo that runs the image previously
+described.
+
+1. Run the container
+    ```bash
+    cd p4-nips
+    docker compose up -d
+    ```
+
+2. Access the container
+
+    You can use `docker exec -ti p4studio bash` to do it.
+    Or use SSH to access the container:
+    ```
+    ssh -p 2222 dev@localhost
+    ```
+    The default password is `p4`.
+
+From here you can use the simulator as described in
+[Open P4 Studio](https://github.com/p4lang/open-p4studio).
+
+
+
+
+# TODO
+1. Create parser for IP -> TCP -> Malicious Signature inside TCP
+2. Implement the single rule in rules/snort.rules
+3. Expand this README to teach how to run p4-nips
