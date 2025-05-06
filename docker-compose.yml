@@ -1,0 +1,21 @@
+services:
+  p4studio:
+    image: voodala/p4studio:0.1
+
+    container_name: p4studio
+    hostname: p4studio
+
+    privileged: true
+
+    ports:
+      - 2222:22
+
+    networks:
+      - p4net
+
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+networks:
+  p4net:
+    name: p4net
