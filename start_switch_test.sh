@@ -3,7 +3,7 @@
 P4TEST=tna_counter
 
 # 128
-sudo ${SDE_INSTALL}/bin/veth_setup.sh 32
+sudo ${SDE_INSTALL}/bin/veth_setup.sh 128
 
 tmux set-option history-limit 500000
 
@@ -15,8 +15,6 @@ tmux split-window -t 0 -h
 
 tmux send-keys -t 0 "cd $SDE" C-m
 tmux send-keys -t 0 "./run_tofino_model.sh -p $P4TEST --arch tofino2" C-m
-
-mkdir -p $SDE/logs
 
 tmux send-keys -t 1 "cd $SDE" C-m
 tmux send-keys -t 1 "./run_switchd.sh -p $P4TEST --arch tofino2" C-m
