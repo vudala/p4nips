@@ -2,8 +2,10 @@
 
 P4TEST=tna_counter
 
+source $P4NIPS ./kill_switch.sh
+
 # 128
-sudo ${SDE_INSTALL}/bin/veth_setup.sh 32
+sudo ${SDE_INSTALL}/bin/veth_setup.sh 128
 
 tmux set-option history-limit 500000
 

@@ -48,6 +48,11 @@ It simulates a Tofino switch that can be used to homolagate your P4 programs.
 The source code of the image is in 
 [this repo](https://github.com/vudala/docker-open-p4studio).
 
+
+## Dependencies
+
+- Docker Engine (any stable version should do)
+
 ## Running 
 
 There is a `docker-compose.yml` in this repo that runs the image previously
@@ -72,6 +77,6 @@ From here you can use the simulator as described in
 
 
 # TODO
-1. Create parser for IP -> TCP -> Malicious Signature inside TCP
+1. Create parser for IP -> TCP -> Malicious signature inside TCP
 2. Implement the single rule in rules/snort.rules
 3. Expand this README to teach how to run p4-nips
