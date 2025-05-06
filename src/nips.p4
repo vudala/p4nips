@@ -7,8 +7,8 @@
 #include <tna.p4>
 #endif
 
-#include "common/headers.p4"
-#include "common/parser.p4"
+#include "headers.p4"
+#include "parser.p4"
 
 
 /* ===================================================== Ingress ===================================================== */

@@ -6,6 +6,6 @@ sudo apt-get install -y \
     tcpreplay \
     tmux
 
-echo export P4SRC=$(pwd) >> ~/.bashrc
+echo export P4NIPS=$(pwd) >> ~/.bashrc
 
 source ~/.bashrc
