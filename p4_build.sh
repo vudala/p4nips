@@ -17,4 +17,4 @@ else
 fi
 
 cd $SDE_INSTALL/bin
-p4c-barefoot --std p4-16 $P4NIPS/src/nips.p4
+./p4c --verbose 2 -I. $P4NIPS/src/nips.p4 -b tofino2 -o $SDE_INSTALL/share/p4/targets/tofino2/nips
