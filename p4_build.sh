@@ -20,6 +20,6 @@ ARCH=tofino2
 P4PROG=nips
 
 cd $SDE_INSTALL/bin
-./p4c -I. $P4NIPS/src/$P4PROG.p4 -b $ARCH -o $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG
+./p4c $P4NIPS/src/$P4PROG.p4 -b $ARCH -o $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG --std p4-16
 ./p4c-gen-bfrt-conf --name $P4PROG --device $ARCH --pipe pipe --testdir $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG --installdir $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG
 mv $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG/bfrt.json $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG/bf-rt.json
