@@ -2,7 +2,7 @@
 
 P4TEST=tna_counter
 
-source $P4NIPS/kill_switch.sh
+source ./$P4NIPS/kill_switch.sh
 
 # 128
 sudo ${SDE_INSTALL}/bin/veth_setup.sh 128

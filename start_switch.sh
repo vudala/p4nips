@@ -1,6 +1,9 @@
 #!/bin/bash
 
+ARCH=tofino2
 P4PROG=nips
+
+$P4NIPS/kill_switch.sh
 
 # 128
 sudo ${SDE_INSTALL}/bin/veth_setup.sh 128
@@ -17,11 +20,11 @@ tmux split-window -t 0 -h
 tmux split-window -t 1 -v
 
 tmux send-keys -t 1 "cd $SDE" C-m
-tmux send-keys -t 1 "./run_switchd.sh --arch tf2 -p $P4PROG" C-m
+tmux send-keys -t 1 "./run_switchd.sh --arch $ARCH -c $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG/$P4PROG.conf -p $P4PROG" C-m
 
 mkdir -p $SDE/logs
 
 tmux send-keys -t 2 "cd $SDE" C-m
-tmux send-keys -t 2 "./run_tofino_model.sh --arch tf2 --log-dir $SDE/logs -c $SDE_INSTALL/share/p4/targets/tofino2/$P4PROG/bfrt.json -p $P4PROG" C-m
+tmux send-keys -t 2 "./run_tofino_model.sh --arch $ARCH --log-dir $SDE/logs -c $SDE_INSTALL/share/p4/targets/$ARCH/$P4PROG/$P4PROG.conf -p $P4PROG" C-m
 
 tmux attach-session -t switch 
