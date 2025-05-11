@@ -54,7 +54,7 @@ header tcp_t {
 [TCP Option]; size(Options) == (data_offset-5)*32; present only when DOffset > 5
 */
 header tcp_options_t {
-    varbit<352> opts;
+    varbit<320> opts;
 }
 
 header signature_t {

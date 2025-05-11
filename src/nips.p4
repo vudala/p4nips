@@ -47,16 +47,39 @@ control SwitchIngress(
         size = 1024;
     }
 
+    action noop(){}
+
+    table http_ports {
+        key = {
+            hdr.tcp.dst_port : exact;
+        }
+        actions = {
+            noop;
+        }
+        /*
+        Commonly used HTTP ports
+        */
+        entries = {
+            80:   noop;
+            8000: noop;
+            8008: noop;
+            8088: noop;
+            8888: noop;
+            9000: noop;
+        }
+        size = 128;
+    }
+
     apply {
         forward.apply();
 
         if (hdr.tcp.isValid()) {
-            // http or https
-            if ((hdr.tcp.dst_port == 80 || hdr.tcp.dst_port == 443))
-            if (hdr.signature.vul1 == 0x74657874) // text
-            if (hdr.signature.vul2 == 0x000000)
-            if (hdr.signature.vul3 == 0x45256D)
+            if (http_ports.apply().hit) {
+                if (hdr.signature.vul1 == 0x74657874) // text
+                if (hdr.signature.vul2 == 0x000000)
+                if (hdr.signature.vul3 == 0x45256D)
                     ig_dprsr_md.drop_ctl = 1;
+            }
         }
     }
 }
