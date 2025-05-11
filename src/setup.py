@@ -46,11 +46,11 @@ def clear_all(verbose=True, batching=True):
                 for entry in entries:
                     entry.remove()
             except Exception as e:
-                print("Problem clearing table {}: {}".format(table['name'], e.sts))
+                print("Problem clearing table {}".format(table['name']))
             finally:
                 if batching: bfrt.batch_end()
         except Exception as e:
-            if e.sts == 6 and verbose: print('(Empty) ', end='')
+            pass
         finally:
             if verbose: print('Done')
 

@@ -75,12 +75,12 @@ parser SwitchIngressParser(
     state parse_tcp {
         packet.extract(hdr.tcp);
         transition select(hdr.tcp.data_offset) {
-            0: accept;
-            1: accept;
-            2: accept;
-            3: accept;
-            4: accept;
-            5: accept;
+            0: parse_signature;
+            1: parse_signature;
+            2: parse_signature;
+            3: parse_signature;
+            4: parse_signature;
+            5: parse_signature;
             default: parse_tcp_options;
         }
     }
