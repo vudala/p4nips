@@ -9,7 +9,6 @@ sudo ${SDE_INSTALL}/bin/veth_setup.sh 128
 
 tmux set-option history-limit 500000
 
-############################ Simulation ####################################
 tmux new-session -d -s switch -n simulation
 
 tmux split-window -t 0 -v

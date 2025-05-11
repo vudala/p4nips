@@ -12,115 +12,70 @@
 #include <tna.p4>
 #endif
 
-typedef bit<48> mac_addr_t;
-typedef bit<16> ether_type_t;
-
 header ethernet_t {
-    mac_addr_t dstAddr;
-    mac_addr_t srcAddr;
-    bit<16> etherType;
+    bit<48> dst_addr;
+    bit<48> src_addr;
+    bit<16> ether_type;
 }
 
 header ipv4_t {
     bit<4>  version;
     bit<4>  ihl;
     bit<8>  diffserv;
-    bit<16> totalLen;
+    bit<16> total_len;
     bit<16> identification;
     bit<3>  flags;
-    bit<13> fragOffset;
+    bit<13> frag_offset;
     bit<8>  ttl;
     bit<8>  protocol;
-    bit<16> hdrChecksum;
-    bit<32> srcAddr;
-    bit<32> dstAddr;
+    bit<16> hdr_checksum;
+    bit<32> src_addr;
+    bit<32> dst_addr;
 }
 
+/*
+TCP based on RFC 9293
+https://datatracker.ietf.org/doc/html/rfc9293
+*/
 header tcp_t {
-    bit<16> srcPort;
-    bit<16> dstPort;
-    bit<32> seqNo;
-    bit<32> ackNo;
-    bit<4>  dataOffset;
-    bit<3>  res;
-    bit<3>  ecn;
-    bit<6>  ctrl;
+    bit<16> src_port;
+    bit<16> dst_port;
+    bit<32> seq_no;
+    bit<32> ack_no;
+    bit<4>  data_offset;
+    bit<4>  res;
+    bit<8>  ctrl;
     bit<16> window;
     bit<16> checksum;
-    bit<16> urgentPtr;
+    bit<16> urgent_ptr;
 }
 
-header Tcp_option_end_h {
-    bit<8> kind;
-}
-header Tcp_option_nop_h {
-    bit<8> kind;
-}
-header Tcp_option_ss_h {
-    bit<8>  kind;
-    bit<32> maxSegmentSize;
-}
-header Tcp_option_s_h {
-    bit<8>  kind;
-    bit<24> scale;
-}
-header Tcp_option_sack_h {
-    bit<8>         kind;
-    bit<8>         length;
-    varbit<256>    sack;
+/*
+[TCP Option]; size(Options) == (data_offset-5)*32; present only when DOffset > 5
+*/
+header tcp_options_t {
+    varbit<352> opts;
 }
 
-header_union Tcp_option_h {
-    Tcp_option_end_h  end;
-    Tcp_option_nop_h  nop;
-    Tcp_option_ss_h   ss;
-    Tcp_option_s_h    s;
-    Tcp_option_sack_h sack;
-}
-
-// Defines a stack of 10 tcp options
-typedef Tcp_option_h[10] Tcp_option_stack;
-
-header Tcp_option_padding_h {
-    varbit<256> padding;
-}
-
-header rule_1 {
+header signature_t {
     bit<624> pad1;  // 78 bytes
-    bit<32> vul1;   // 4 bytes
+    bit<32> vul1;   // 4 bytes (text)
     bit<8> pad2;    // 1 byte
-    bit<24> vul2;   // 3 bytes
-    bit<8> pad3;    // 1 byte
-    bit<24> vul3;   // 3 bytes 
+    bit<24> vul2;   // 3 bytes (0x000000)
+    bit<8> pad3;    // 1 byte    
+    bit<24> vul3;   // 3 bytes (0x45256D)
 }
 
 struct header_t {
     ethernet_t       ethernet;
     ipv4_t           ipv4;
     tcp_t            tcp;
-    Tcp_option_stack tcp_options_vec;
-    Tcp_option_padding_h tcp_options_padding;
-    rule_1           signature;
-}
-
-struct fwd_metadata_t {
-    bit<32> l2ptr;
-    bit<24> out_bd;
+    tcp_options_t    tcp_options;
+    signature_t      signature;
 }
 
 struct metadata_t {}
 
-error {
-    TcpDataOffsetTooSmall,
-    TcpOptionTooLongForHeader,
-    TcpBadSackOptionLength
-}
-
-struct Tcp_option_sack_top
-{
-    bit<8> kind;
-    bit<8> length;
-}
 
 
 #endif /* _HEADERS_ */
