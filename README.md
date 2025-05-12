@@ -77,6 +77,8 @@ From here you can use the simulator as described in
 
 
 # TODO
-1. Create parser for IP -> TCP -> Malicious signature inside TCP
-2. Implement the single rule in rules/snort.rules
-3. Expand this README to teach how to run p4-nips
+1. Create parser for IP -> TCP -> Malicious signature inside TCP (DONE)
+2. Implement the single rule in rules/snort.rules (DONE)
+3. Expand this README to teach how to run p4-nips (DONE)
+4. Run pcap with tcpreplay to mimic real traffic
+5. Insert malicioius packet in it

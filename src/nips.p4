@@ -33,19 +33,19 @@ control SwitchIngress(
         ig_dprsr_md.drop_ctl = drop; // drop packet.
     }
 
-    table forward {
-        key = {
-            hdr.ethernet.dst_addr : exact;
-        }
+    // table forward {
+    //     key = {
+    //         hdr.ethernet.dst_addr : exact;
+    //     }
 
-        actions = {
-            hit;
-            @defaultonly miss;
-        }
+    //     actions = {
+    //         hit;
+    //         @defaultonly miss;
+    //     }
 
-        const default_action = miss(0x1);
-        size = 1024;
-    }
+    //     const default_action = miss(0x1);
+    //     size = 1024;
+    // }
 
     action noop(){}
 
@@ -71,14 +71,18 @@ control SwitchIngress(
     }
 
     apply {
-        forward.apply();
+        // forward.apply();
+
+        ig_tm_md.ucast_egress_port = 10;
 
         if (hdr.tcp.isValid()) {
             if (http_ports.apply().hit) {
-                if (hdr.signature.vul1 == 0x74657874) // text
-                if (hdr.signature.vul2 == 0x000000)
-                if (hdr.signature.vul3 == 0x45256D)
-                    ig_dprsr_md.drop_ctl = 1;
+                if (hdr.signature.isValid()) {
+                    if (hdr.signature.vul1 == 0x74657874) // text
+                    if (hdr.signature.vul2 == 0x000000)
+                    if (hdr.signature.vul3 == 0x45256D)
+                        ig_dprsr_md.drop_ctl = 1;
+                }
             }
         }
     }
