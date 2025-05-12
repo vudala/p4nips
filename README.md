@@ -109,3 +109,7 @@ Compile the code:
 3. ~~Expand this README to teach how to run p4-nips~~
 4. Run pcap with tcpreplay to mimic real traffic
 5. Insert malicious packet in the traffic to determine if IPS is dropping
+
+## Optional
+1. Add MAU to check for $EXTERNAL_NET
+2. Add MAU to check for $HOME_NET
