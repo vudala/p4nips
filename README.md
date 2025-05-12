@@ -38,12 +38,14 @@ Follow this tutorial to understand the basics up to advanced P4 programming
 Specification of a P4 programmable switch
 - https://p4.org/wp-content/uploads/2024/10/P4-16-spec-v1.2.5.html
 
-
-
-
 # Running 
 
 This section describes the workflow to run P4NIPS.
+
+First of all, pull the repo:
+```bash
+git clone git@github.com:vudala/p4nips.git
+```
 
 ## Open P4 Studio
 
