@@ -39,22 +39,26 @@ Specification of a P4 programmable switch
 - https://p4.org/wp-content/uploads/2024/10/P4-16-spec-v1.2.5.html
 
 
-# Tofino simulator
+
+
+# Running 
+
+This section describes the workflow to run P4NIPS.
+
+## Open P4 Studio
 
 I have compiled and created a Docker image with
 [Open P4 Studio](https://github.com/p4lang/open-p4studio) in it.
-It simulates a Tofino switch that can be used to homolagate your P4 programs.
+It simulates a Tofino switch that can be used to homologate your P4 programs.
 
 The source code of the image is in 
 [this repo](https://github.com/vudala/docker-open-p4studio).
 
-
-## Dependencies
+### Dependencies
 
 - Docker Engine (any stable version should do)
 
-## Running 
-
+## Running the container
 There is a `docker-compose.yml` in this repo that runs the image previously
 described.
 
@@ -75,10 +79,33 @@ described.
 From here you can use the simulator as described in
 [Open P4 Studio](https://github.com/p4lang/open-p4studio).
 
+## Starting P4NIPS
+
+### Setup
+When inside the container, install dependencies using:
+```bash
+cd ~/p4nips
+./setup.sh
+source ~/.bashrc
+```
+
+### Compile
+Compile the code:
+```bash
+cd ~/p4nips
+./p4_build.sh
+```
+
+### Start the switch
+Compile the code:
+```bash
+./start_switch.sh
+```
+
 
 # TODO
-1. Create parser for IP -> TCP -> Malicious signature inside TCP (DONE)
-2. Implement the single rule in rules/snort.rules (DONE)
-3. Expand this README to teach how to run p4-nips (DONE)
+1. ~~Create parser for IP -> TCP -> Malicious signature inside TCP~~
+2. ~~Implement the single rule in rules/snort.rules~~
+3. ~~Expand this README to teach how to run p4-nips~~
 4. Run pcap with tcpreplay to mimic real traffic
-5. Insert malicioius packet in it
+5. Insert malicious packet in the traffic to determine if IPS is dropping
