@@ -15,6 +15,7 @@ services:
 
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - .:/home/dev/p4nips
 
 networks:
   p4net:
