@@ -58,6 +58,7 @@ parser SwitchIngressParser(
         tofino_parser.apply(packet, ig_intr_md);
         transition parse_ethernet;
     }
+
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.ether_type) {
@@ -65,19 +66,24 @@ parser SwitchIngressParser(
             default: accept;
         }
     }
+
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
         transition select(hdr.ipv4.frag_offset,
                           hdr.ipv4.protocol,
                           hdr.ipv4.ihl) {
             (0, IPV4_PROTOCOL_TCP, 5): parse_tcp;
-            default: parse_ipv4_options;
+            (0, _, _): parse_ipv4_options;
+            default: accept;
         }
     }
 
     state parse_ipv4_options {
         packet.extract(hdr.ipv4_options, ((bit<32>) (hdr.ipv4.ihl - 5)) * 32);
-        transition parse_tcp;
+        transition select(hdr.ipv4.protocol) {
+            IPV4_PROTOCOL_TCP: parse_tcp;
+            default: accept;
+        }
     }
 
     state parse_tcp {
@@ -93,7 +99,7 @@ parser SwitchIngressParser(
         transition parse_signature;
     }
 
-    /* Check if theres enough bytes left in the packet to do it*/
+    /* TODO: Should heck if theres enough bytes left in the packet to do it */
     state parse_signature {
         packet.extract(hdr.signature);
         transition accept;
