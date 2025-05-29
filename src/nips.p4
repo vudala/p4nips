@@ -23,13 +23,30 @@ control SwitchIngress(
     inout ingress_intrinsic_metadata_for_deparser_t     ig_dprsr_md,
     inout ingress_intrinsic_metadata_for_tm_t           ig_tm_md)
 {
+    apply {
+               
+    }
+}
+
+/* ===================================================== Egress ===================================================== */
+
+control SwitchEgress(
+    /* User */
+    inout header_t      hdr,
+    inout metadata_t    meta,
+    /* Intrinsic */
+    in egress_intrinsic_metadata_t                      eg_intr_md,
+    in egress_intrinsic_metadata_from_parser_t          eg_prsr_md,
+    inout egress_intrinsic_metadata_for_deparser_t      eg_dprsr_md,
+    inout egress_intrinsic_metadata_for_output_port_t   eg_oport_md)
+{
     /* Forward */
     action hit(PortId_t port) {
-        ig_tm_md.ucast_egress_port = port;
+        eg_intr_md.egress_port = port;
     }
 
     action miss(bit<3> drop) {
-        ig_dprsr_md.drop_ctl = drop; // drop packet.
+        eg_dprsr_md.drop_ctl = drop; // drop packet.
     }
 
     table forward {
@@ -71,8 +88,8 @@ control SwitchIngress(
 
     apply {
         forward.apply();
-        ig_tm_md.ucast_egress_port = 10;
-        ig_dprsr_md.drop_ctl = 0;
+        eg_intr_md.egress_port = 10;
+        eg_dprsr_md.drop_ctl = 0;
 
         if (hdr.tcp.isValid()) {
             if (http_ports.apply().hit) {
@@ -80,26 +97,11 @@ control SwitchIngress(
                     if (hdr.signature.vul1 == 0x74657874) // text
                     if (hdr.signature.vul2 == 0x000000)
                     if (hdr.signature.vul3 == 0x45256D)
-                        ig_dprsr_md.drop_ctl = 1;
+                        eg_dprsr_md.drop_ctl = 1;
                 }
             }
         }
     }
-}
-
-/* ===================================================== Egress ===================================================== */
-
-control SwitchEgress(
-    /* User */
-    inout header_t      hdr,
-    inout metadata_t    meta,
-    /* Intrinsic */
-    in egress_intrinsic_metadata_t                      eg_intr_md,
-    in egress_intrinsic_metadata_from_parser_t          eg_prsr_md,
-    inout egress_intrinsic_metadata_for_deparser_t      eg_dprsr_md,
-    inout egress_intrinsic_metadata_for_output_port_t   eg_oport_md)
-{
-    apply {}
 }
 
 

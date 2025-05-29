@@ -70,12 +70,18 @@ header signature_t {
     bit<24> vul3;   // 3 bytes (0x45256D)
 }
 
+header parse_status_t {
+    bool can_parse;
+    bit<7> padding;
+}
+
 struct header_t {
     ethernet_t       ethernet;
     ipv4_t           ipv4;
     ipv4_options_t   ipv4_options;
     tcp_t            tcp;
     tcp_options_t    tcp_options;
+    parse_status_t   parse_status;
     signature_t      signature;
 }
 

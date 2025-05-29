@@ -58,6 +58,7 @@ parser SwitchIngressParser(
         tofino_parser.apply(packet, ig_intr_md);
         transition parse_ethernet;
     }
+
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.ether_type) {
@@ -65,6 +66,7 @@ parser SwitchIngressParser(
             default: accept;
         }
     }
+    
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
         transition select(hdr.ipv4.frag_offset,
@@ -83,19 +85,13 @@ parser SwitchIngressParser(
     state parse_tcp {
         packet.extract(hdr.tcp);
         transition select(hdr.tcp.data_offset) {
-            5: parse_signature;
+            5: accept;
             _: parse_tcp_options;
         }
     }
 
     state parse_tcp_options {
         packet.extract(hdr.tcp_options, ((bit<32>) (hdr.tcp.data_offset - 5)) * 32);
-        transition parse_signature;
-    }
-
-    /* Check if theres enough bytes left in the packet to do it*/
-    state parse_signature {
-        packet.extract(hdr.signature);
         transition accept;
     }
 }
@@ -131,6 +127,55 @@ parser SwitchEgressParser(packet_in pkt,
 
     state start {
         tofino_parser.apply(pkt, eg_intr_md);
+        transition parse_ethernet;
+    }
+
+    state parse_ethernet {
+        packet.extract(hdr.ethernet);
+        transition select(hdr.ethernet.ether_type) {
+            ETHERTYPE_IPV4: parse_ipv4;
+            default: accept;
+        }
+    }
+
+    state parse_ipv4 {
+        packet.extract(hdr.ipv4);
+        transition select(hdr.ipv4.frag_offset,
+                          hdr.ipv4.protocol,
+                          hdr.ipv4.ihl) {
+            (0, IPV4_PROTOCOL_TCP, 5): parse_tcp;
+            default: parse_ipv4_options;
+        }
+    }
+
+    state parse_ipv4_options {
+        packet.extract(hdr.ipv4_options, ((bit<32>) (hdr.ipv4.ihl - 5)) * 32);
+        transition parse_tcp;
+    }
+
+    state parse_tcp {
+        packet.extract(hdr.tcp);
+        transition select(hdr.tcp.data_offset) {
+            5: parse_signature_control;
+            _: parse_tcp_options;
+        }
+    }
+
+    state parse_tcp_options {
+        packet.extract(hdr.tcp_options, ((bit<32>) (hdr.tcp.data_offset - 5)) * 32);
+        transition parse_signature_control;
+    }
+
+    state parse_signature_control {
+        packet.extract(hdr.parse_status);
+        transition select (hdr.parse_status.can_parse) {
+            true: parse_signature;
+            false: accept;
+        }
+    }
+
+    state parse_signature {
+        packet.extract(hdr.signature);
         transition accept;
     }
 }
