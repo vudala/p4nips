@@ -55,6 +55,7 @@ parser SwitchIngressParser(
     TofinoIngressParser() tofino_parser;
 
     state start {
+        meta = {false};
         tofino_parser.apply(packet, ig_intr_md);
         transition parse_ethernet;
     }
@@ -116,7 +117,7 @@ control SwitchIngressDeparser(packet_out pkt,
 // ---------------------------------------------------------------------------
 // Egress Parser
 // -----------------------------------------f----------------------------------
-parser SwitchEgressParser(packet_in pkt,
+parser SwitchEgressParser(packet_in packet,
     /* User */
     out header_t        hdr,
     out metadata_t      meta,
@@ -125,8 +126,12 @@ parser SwitchEgressParser(packet_in pkt,
 {
     TofinoEgressParser() tofino_parser;
 
+    const bit<16> ETHERTYPE_IPV4 = 0x0800;
+    const bit<8> IPV4_PROTOCOL_TCP = 6;
+
     state start {
-        tofino_parser.apply(pkt, eg_intr_md);
+        meta = {false};
+        tofino_parser.apply(packet, eg_intr_md);
         transition parse_ethernet;
     }
 

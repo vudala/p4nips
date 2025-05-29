@@ -86,6 +86,7 @@ struct header_t {
 }
 
 struct metadata_t {
+    bool compare;
 }
 
 
