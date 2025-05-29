@@ -7,8 +7,7 @@ count = 0
 
 # Define a callback function to process each sniffed packet
 def process_packet(pkt):
-    pkt.show()
-
+    # pkt.show()
     global count
     count += 1
     print(count)
