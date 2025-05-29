@@ -33,6 +33,10 @@ header ipv4_t {
     bit<32> dst_addr;
 }
 
+header ipv4_options_t {
+    varbit<320> opts;
+}
+
 /*
 TCP based on RFC 9293
 https://datatracker.ietf.org/doc/html/rfc9293
@@ -69,12 +73,14 @@ header signature_t {
 struct header_t {
     ethernet_t       ethernet;
     ipv4_t           ipv4;
+    ipv4_options_t   ipv4_options;
     tcp_t            tcp;
     tcp_options_t    tcp_options;
     signature_t      signature;
 }
 
-struct metadata_t {}
+struct metadata_t {
+}
 
 
 

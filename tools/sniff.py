@@ -5,15 +5,6 @@ interface = 'veth21'
 
 count = 0
 
-ETHER_TEST = 0x8234
-class Test(Packet):
-    name = 'Test'
-    fields_desc = [
-        IntField('index', -1)
-    ]
-
-bind_layers(Ether, Test, type=ETHER_TEST)
-
 # Define a callback function to process each sniffed packet
 def process_packet(pkt):
     pkt.show()

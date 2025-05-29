@@ -67,29 +67,33 @@ parser SwitchIngressParser(
     }
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
-        transition select(hdr.ipv4.protocol) {
-            IPV4_PROTOCOL_TCP: parse_tcp;
-            default: accept;
+        transition select(hdr.ipv4.frag_offset,
+                          hdr.ipv4.protocol,
+                          hdr.ipv4.ihl) {
+            (0, IPV4_PROTOCOL_TCP, 5): parse_tcp;
+            default: parse_ipv4_options;
         }
     }
+
+    state parse_ipv4_options {
+        packet.extract(hdr.ipv4_options, ((bit<32>) (hdr.ipv4.ihl - 5)) * 32);
+        transition parse_tcp;
+    }
+
     state parse_tcp {
         packet.extract(hdr.tcp);
         transition select(hdr.tcp.data_offset) {
-            0: parse_signature;
-            1: parse_signature;
-            2: parse_signature;
-            3: parse_signature;
-            4: parse_signature;
             5: parse_signature;
-            default: parse_tcp_options;
+            _: parse_tcp_options;
         }
     }
 
     state parse_tcp_options {
-        packet.extract(hdr.tcp_options, ((bit<32>) hdr.tcp.data_offset) - 5 * 32);
+        packet.extract(hdr.tcp_options, ((bit<32>) (hdr.tcp.data_offset - 5)) * 32);
         transition parse_signature;
     }
 
+    /* Check if theres enough bytes left in the packet to do it*/
     state parse_signature {
         packet.extract(hdr.signature);
         transition accept;

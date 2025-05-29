@@ -13,7 +13,6 @@
 
 /* ===================================================== Ingress ===================================================== */
 
-
 control SwitchIngress(
     /* User */
     inout header_t      hdr,
@@ -72,6 +71,8 @@ control SwitchIngress(
 
     apply {
         forward.apply();
+        ig_tm_md.ucast_egress_port = 10;
+        ig_dprsr_md.drop_ctl = 0;
 
         if (hdr.tcp.isValid()) {
             if (http_ports.apply().hit) {
@@ -83,8 +84,6 @@ control SwitchIngress(
                 }
             }
         }
-
-        ig_tm_md.ucast_egress_port = 10;
     }
 }
 
