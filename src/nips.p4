@@ -10,8 +10,6 @@
 #include "headers.p4"
 #include "parser.p4"
 
-// bf-p4c -I. --std p4-16 -b tofino2 -o $SDE_INSTALL/share/p4/targets/tofino2/nips ~/src/nips/nips.p4
-
 /* ===================================================== Ingress ===================================================== */
 
 control SwitchIngress(
@@ -54,11 +52,10 @@ control SwitchIngress(
         ig_dprsr_md.drop_ctl = 0;
         ig_tm_md.ucast_egress_port = 10;
 
-        hdr.parse_status.setValid();
-
-        if (hdr.ipv4.isValid()) {
-            meta.compare = hdr.ipv4.total_len > 90;
-            hdr.parse_status.can_parse = meta.compare;
+        if (hdr.ipv4.isValid() && hdr.tcp.isValid()) {
+            meta.compare = (hdr.ipv4.total_len - ((bit<16>)(hdr.ipv4.ihl + hdr.tcp.data_offset)) / 4) > 90;
+            if (meta.compare)
+                hdr.parse_status = {true, 0};
         }
     }
 }

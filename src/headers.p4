@@ -72,7 +72,7 @@ header signature_t {
 
 header parse_status_t {
     bool can_parse;
-    bit<7> padding;
+    bit<7> padd;
 }
 
 struct header_t {
@@ -81,8 +81,8 @@ struct header_t {
     ipv4_options_t   ipv4_options;
     tcp_t            tcp;
     tcp_options_t    tcp_options;
-    parse_status_t   parse_status;
     signature_t      signature;
+    parse_status_t   parse_status;
 }
 
 struct metadata_t {
