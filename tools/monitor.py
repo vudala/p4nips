@@ -14,8 +14,10 @@ def process_packet(pkt):
 
 def monitor():
     last_count = 0
+    tstamp = 0
     while True:
-        print(f"RX: {count - last_count}")
+        print(f"{tstamp} RX: {count - last_count}")
+        tstamp += 1
         last_count = count
         time.sleep(1)
 
