@@ -1,5 +1,4 @@
 from scapy.all import *
-from scapy.layers.l2 import Ether
 
 # Inteface linked to port 10 of the switch
 interface = 'veth21'
