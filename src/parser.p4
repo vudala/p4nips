@@ -2,6 +2,7 @@
     #define _PARSER_
 
 /* ===================================================== Tofino Parsers ===================================================== */
+/*  These are intrisic Tofino parsers for intrisic Tofino headers, not to be changed */
 
 parser TofinoIngressParser(
         packet_in pkt,
@@ -16,7 +17,7 @@ parser TofinoIngressParser(
     }
 
     state parse_resubmit {
-        transition reject; // parse resubmitted packet here.
+        transition reject;
     }
 
     state parse_port_metadata {
@@ -54,11 +55,14 @@ parser SwitchIngressParser(
 
     TofinoIngressParser() tofino_parser;
 
+    /* Parser starting point */
     state start {
+        // Parse Tofino intrinsic headers
         tofino_parser.apply(packet, ig_intr_md);
         transition parse_ethernet;
     }
 
+    /* Parser ethernet headers */
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.ether_type) {
@@ -67,6 +71,7 @@ parser SwitchIngressParser(
         }
     }
 
+    /* Parse IPV4 headers */
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
         transition select(hdr.ipv4.frag_offset,
@@ -78,7 +83,9 @@ parser SwitchIngressParser(
         }
     }
 
+    /* If theres IPV4 optios, parse it */
     state parse_ipv4_options {
+        /* Calculate how many bytes to be extracted and extract */
         packet.extract(hdr.ipv4_options, ((bit<32>) (hdr.ipv4.ihl - 5)) * 32);
         transition select(hdr.ipv4.protocol) {
             IPV4_PROTOCOL_TCP: parse_tcp;
@@ -86,20 +93,23 @@ parser SwitchIngressParser(
         }
     }
 
+    /* Parse TCP if ipv4.protocol = 6 */
     state parse_tcp {
         packet.extract(hdr.tcp);
         transition select(hdr.tcp.data_offset) {
             5: parse_signature;
+            // If data_offset greater than 5, parse TCP options
             _: parse_tcp_options;
         }
     }
 
+    // Parse TCP options if theres any
     state parse_tcp_options {
         packet.extract(hdr.tcp_options, ((bit<32>) (hdr.tcp.data_offset - 5)) * 32);
         transition parse_signature;
     }
 
-    /* TODO: Should heck if theres enough bytes left in the packet to do it */
+    // Finally, extract the data from the payload as headers, to be compared
     state parse_signature {
         packet.extract(hdr.signature);
         transition accept;
@@ -117,6 +127,7 @@ control SwitchIngressDeparser(packet_out pkt,
     in ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md)
 {
     apply {
+        // Reemit parsed data
         pkt.emit(hdr);
     }
 }
@@ -125,7 +136,7 @@ control SwitchIngressDeparser(packet_out pkt,
 
 // ---------------------------------------------------------------------------
 // Egress Parser
-// -----------------------------------------f----------------------------------
+// ---------------------------------------------------------------------------
 parser SwitchEgressParser(packet_in pkt,
     /* User */
     out header_t        hdr,
@@ -135,6 +146,7 @@ parser SwitchEgressParser(packet_in pkt,
 {
     TofinoEgressParser() tofino_parser;
 
+    /* Parse starting point */
     state start {
         tofino_parser.apply(pkt, eg_intr_md);
         transition accept;

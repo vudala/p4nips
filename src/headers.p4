@@ -12,12 +12,14 @@
 #include <tna.p4>
 #endif
 
+// Ethernet header
 header ethernet_t {
     bit<48> dst_addr;
     bit<48> src_addr;
     bit<16> ether_type;
 }
 
+// IPV4 header
 header ipv4_t {
     bit<4>  version;
     bit<4>  ihl;
@@ -38,7 +40,7 @@ header ipv4_options_t {
 }
 
 /*
-TCP based on RFC 9293
+TCP header based on RFC 9293
 https://datatracker.ietf.org/doc/html/rfc9293
 */
 header tcp_t {
@@ -61,6 +63,7 @@ header tcp_options_t {
     varbit<320> opts;
 }
 
+// Malicious signature header
 header signature_t {
     bit<624> pad1;  // 78 bytes
     bit<32> vul1;   // 4 bytes (text)
@@ -70,6 +73,7 @@ header signature_t {
     bit<24> vul3;   // 3 bytes (0x45256D)
 }
 
+// Resulting header structure
 struct header_t {
     ethernet_t       ethernet;
     ipv4_t           ipv4;
@@ -79,9 +83,8 @@ struct header_t {
     signature_t      signature;
 }
 
-struct metadata_t {
-}
-
+/* Metadata to be used on the pipeline, none set */
+struct metadata_t {}
 
 
 #endif /* _HEADERS_ */

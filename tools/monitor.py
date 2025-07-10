@@ -3,6 +3,7 @@ from scapy.layers.l2 import Ether
 import threading 
 import time
 
+# Inteface linked to port 10 of the switch
 interface = 'veth21'
 
 count = 0
@@ -12,6 +13,7 @@ def process_packet(pkt):
     global count
     count += 1
 
+# Counts packets processed in the last second
 def monitor():
     last_count = 0
     tstamp = 0
@@ -23,8 +25,11 @@ def monitor():
 
 threads = []
 
+# Create a thread to count the packets
 t1 = threading.Thread(target=monitor)
 threads.append(t1)
+
+# Create a thread to sniff the packets
 t2 = threading.Thread(
     target=sniff,
     kwargs={"prn": process_packet, "iface": interface}

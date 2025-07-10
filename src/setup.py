@@ -10,7 +10,7 @@ exec("p4 = bfrt.{prog}.pipe".format(prog=P4_PROG))  # access to the program-spec
 port = bfrt.port                                    # port management
 pre = bfrt.pre                                      # packet replication engine
 
-### ====================== DIUF-Cluster (machines connected on second network card (enp4s0f1 eth interface)) ====================== ###
+### ====================== DIUF-Cluster (machines connected on second network card) ====================== ###
 # Ports 8 to 15
 port_map = [ # port_name | mac | speed
     # Pipeline 1
@@ -92,12 +92,6 @@ def clear_table(table):
 ### ========================================================================================================================================== ###
 
 print("Populating table entries")
-
-# Forward Table
-for switch_port in port_map:
-    if switch_port.mac == '': continue
-    
-    p4.SwitchIngress.forward.add_with_hit(dst_addr=switch_port.mac, port=get_device_port(switch_port.port_name))
 
 ### ========================================================================================================================================== ###
 

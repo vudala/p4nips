@@ -23,15 +23,17 @@ control SwitchIngress(
     inout ingress_intrinsic_metadata_for_deparser_t     ig_dprsr_md,
     inout ingress_intrinsic_metadata_for_tm_t           ig_tm_md)
 {
-    /* Forward */
+    /* Forward action */
     action hit(PortId_t port) {
         ig_tm_md.ucast_egress_port = port;
     }
 
+    /* Drop action */
     action miss(bit<3> drop) {
         ig_dprsr_md.drop_ctl = drop; // drop packet.
     }
 
+    /* MAU to forward based on MAC*/
     table forward {
         key = {
             hdr.ethernet.dst_addr : exact;
@@ -48,6 +50,7 @@ control SwitchIngress(
 
     action noop(){}
 
+    // MAU to check http ports rule
     table http_ports {
         key = {
             hdr.tcp.dst_port : exact;
@@ -70,10 +73,16 @@ control SwitchIngress(
     }
 
     apply {
+        // Redirect all traffic to port 10
         forward.apply();
         ig_tm_md.ucast_egress_port = 10;
         ig_dprsr_md.drop_ctl = 0;
 
+        /*
+        If theres a valid tcp header, and the packet is going to a configured
+        HTTP port, check for a malicious signature in the packet.
+        If all the ifs are true, marks the packet to be dropped.
+        */
         if (hdr.tcp.isValid()) {
             if (http_ports.apply().hit) {
                 if (hdr.signature.isValid()) {
