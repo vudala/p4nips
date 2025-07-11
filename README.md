@@ -1,89 +1,101 @@
-# P4 NIPS
-Implementing a Network Intrusion Protection System in a P4 switch
+# P4NIPS: P4 Network Intrusion Prevention System
 
+An IPS must be deployed in line with the network traffic to be able to
+drop or accept packets according to evaluations done. Due to this, traditional
+IPS usage typically has an adverse effect on the network’s latency and
+throughput. To mitigate the efficiency problem, we propose P4NIPS, an IPS built
+with P4 intended to run on a programmable switch. Its viability is demonstrated
+in a simulated environment, where the architecture of the Tofino 2 chip is used.
 
-# Why would be advantageous to have a NIPS in the switch?
+This repository contains the P4 code of P4NIPS. Furthermore it also has scripts
+and data to replicate the tests described in the paper.
 
-## Pros
-- Offloads the computation from a general use machine (packet doesnt need to go
-through the TCP/IP stack)
-- Programmable ASIC switches (Tofino, Tomahawk, Trident, Teralynx, etc) are
-fast as fuck to process a packet (some tens of cycles at most), compared to
-a software switch or IDS.
-- Has little impact on the latency on the network flow compared to traditional
-IPSs
-- More
+# Structure
 
-## Cons
-- Limited capacities of P4
-- Hardware is expensive and unavailable
-- More
-
-<!-- # Reference articles
-
-- https://arxiv.org/abs/2411.17987
-- https://ieeexplore.ieee.org/document/9040044
-- https://cris.unibo.it/retrieve/e1dcb335-4198-7715-e053-1705fe0a6cc9/IEEE_ACCESS_pub.pdf
-
-
-# P4 study materials
-
-## What is a PISA switch?
-Read this to have an overview of what is a programmable switch
-- https://sdn.systemsapproach.org/switch.html
-
-## P4 tutorial
-
-Follow this tutorial to understand the basics up to advanced P4 programming
-- https://github.com/p4lang/tutorials
-
-## P4 language documentation
-
-Specification of a P4 programmable switch
-- https://p4.org/wp-content/uploads/2024/10/P4-16-spec-v1.2.5.html -->
-
-# Running 
-
-This section describes the workflow to run P4NIPS.
-
-First of all, pull the repo:
-```bash
-git clone git@github.com:vudala/p4nips.git
+```console
+p4nips - Root of the repository
+├── docker-compose.yml - Docker compose config file to run Open P4 Studio
+├── experiments
+│   ├── benign.pcap - PCAP with benign data
+│   ├── malicious.pcap - PCAP with malicious data
+│   ├── mal_pcap_gen.py - Python script to generate 5000 malicious packets 
+│   └── trim_pcap.sh - Python script to extracts the first 5000 packets from a PCAP
+├── kill_switch.sh - Bash script to kill the tmux session that runs the switch
+├── p4_build.sh - - Bash script to compile the P4 code
+├── ports.json - JSON file that describes the port mapping to virtual ethernet interfaces
+├── README_final.md
+├── README.md
+├── requirements.txt - Python script dependencies
+├── rules
+│   └── snort.rules - Contains the reference rule of the article
+├── setup.sh - Bash script to install dependencies of the project
+├── src
+│   ├── headers.p4 - P4 code that contains the headers
+│   ├── nips.p4 - Main P4 code of P4NIPS, imports parser.p4 and headers.p4
+│   ├── parser.p4 - P4 code that contains the parsers and deparsers
+│   └── setup.py - Python code that interacts with Barefoot Runtime control plane to update the tables
+├── start_switch.sh - Bash script to start the switch simulation within a tmux
+└── tools
+    ├── monitor.py - Python script to monitor the veth21 interface and count the packets
+    └── sniff.py - Python script to test if P4NIPS is working properly
 ```
 
-## Open P4 Studio
+# Considered stamps
 
-I have compiled and created a Docker image with
-[Open P4 Studio](https://github.com/p4lang/open-p4studio) in it.
-Open P4 Studio provides a simulated Tofino chip that can be used to homologate
-your P4 programs.
+The stamps considered are:
+- Artefatos Disponíveis (SeloD)
+- Artefatos Funcionais (SeloF)
+- Artefatos Sustentáveis (SeloS)
+- Experimentos Reprodutíveis (SeloR)
 
-The source code of the image is in 
-[this repo](https://github.com/vudala/docker-open-p4studio).
+# Basic information
 
-This image is used in this demonstration.
+This section specifies the hardware and software setup where the experiments
+were executed.
+The tool works with any environment that is able to run Docker and Docker Compose
+on newer versions.
 
-### Dependencies
+## Hardware requirements
 
-- Docker Engine (any stable version should do)
+- 16GB RAM
+- 6 CPU cores
+- 256GB disk space
+
+# Dependencies
+
+## Software requirements
+
+- OS: Ubuntu 22.04
+- Docker Engine 28.2.2
+- Docker Compose version v2.36.2
+
+# Security precautions
+
+No risks attached to this work.
+
+# Instalation
 
 ## Running the container
 There is a `docker-compose.yml` in this repo that runs the image previously
 described.
 
-1. Run the container
-    ```bash
-    cd p4-nips
-    docker compose up -d
-    ```
+1. Using a terminal, clone the repository
+```bash
+git clone LINK
+```
 
-2. Access the container
-    You can use `docker exec -ti p4studio bash` to do it.
-    Or use SSH to access the container:
-    ```
-    ssh -p 2222 dev@localhost
-    ```
-    The default password is `p4`.
+2. Then run the container
+```bash
+cd p4nips
+docker compose up -d
+```
+This step takes some mintutes the first time is executed, since it downloads the
+image that has the P4 studio installed in it.
+
+3. Access the container
+```bash
+docker exec -ti p4studio bash
+```
 
 ## Starting P4NIPS
 
@@ -102,12 +114,16 @@ cd ~/p4nips
 ./p4_build.sh
 ```
 
+# Test run
+
 ### Start the switch
 Then you are ready to start the switch:
 ```bash
 cd ~/p4nips
 ./start_switch.sh
 ```
+
+`CTRL + B + D` to detach from tmux session
 
 This script initialized the control plane API (Barefoot Runtime - BFRT), the
 Tofino chip simulator, setups virtual ethernet interfaces - which are mapped
@@ -141,14 +157,18 @@ sudo python3 monitor.py
 sudo tcpreplay -i veth 17 --pps 25 traffic.pcap
 ```
 
-# TODO
-1. ~~Create parser for IP -> TCP -> Malicious signature inside TCP~~
-2. ~~Implement the single rule in rules/snort.rules~~
-3. ~~Expand this README to teach how to run p4-nips~~
-4. ~~Run pcap with tcpreplay to mimic real traffic~~
-5. ~~Insert malicious packet in the traffic to determine if IPS is dropping~~
-6. Add check to prevent packets too small from being parsed
+# Experimentos
 
-## Optional
-1. Add MAU to check for $EXTERNAL_NET
-2. Add MAU to check for $HOME_NET
+Esta seção deve descrever um passo a passo para a execução e obtenção dos resultados do artigo. Permitindo que os revisores consigam alcançar as reivindicações apresentadas no artigo.
+Cada reivindicações deve ser apresentada em uma subseção, com detalhes de arquivos de configurações a serem alterados, comandos a serem executados, flags a serem utilizadas, tempo esperado de execução, expectativa de recursos a serem utilizados como 1GB RAM/Disk e resultado esperado.
+
+Caso o processo para a reprodução de todos os experimentos não seja possível em tempo viável. Os autores devem escolher as principais reivindicações apresentadas no artigo e apresentar o respectivo processo para reprodução.
+
+## Reivindicações #X
+
+## Reivindicações #Y
+
+# LICENSE
+
+Apresente a licença.
+
