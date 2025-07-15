@@ -221,7 +221,7 @@ Create a new tmux session:
 tmux
 ```
 Then split it in two panes pressing `CTRL + B + %`. To switch between panes press
-`CTRL + B + Left` or `CTRL + B + Right`.
+`CTRL + B + Left Arrow` or `CTRL + B + Right Arrow`.
 
 In the right pane, start sniffing for packets on interface 'veth21', using:
 ```bash
@@ -252,10 +252,11 @@ Create a new tmux session to run the experiments:
 tmux
 ```
 Then split it in two panes pressing `CTRL + B + %`. To switch between panes press
-`CTRL + B + Left` or `CTRL + B + Right`.
+`CTRL + B + Left Arrow` or `CTRL + B + Right Arrow`.
 
 ## Routes packets normally
-In the right pane, start count the packet that are redirected to port 10, using:
+In the right pane, start count the packet that are redirected to port 10 in the
+last secod, using:
 ```bash
 cd ~/p4nips/tools
 sudo python3 monitor.py
@@ -291,7 +292,8 @@ Result in the right pane:
 Now, we are going to send malicious traffic to P4NIPS, and verify its dropped.
 
 In the left pane cancel the running process, and start sending web traffic to
-P4NIPS using the same command as before, but with a different pcap:
+P4NIPS using the same command as before, but with a different pcap with malicious
+packets:
 ```bash
 cd ~/p4nips/experiments
 sudo tcpreplay -i veth17 --pps 25 malicious.pcap
@@ -306,6 +308,8 @@ Result in the right pane:
 43 RX: 0
 ...
 ```
+
+No packets arrive at the target port.
 
 # LICENSE
 
