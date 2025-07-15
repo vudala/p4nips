@@ -239,13 +239,24 @@ In the right pane you should start seeing a lot of data being printed in the
 console. These are the packet contents of that pcap in hex or ASCII.
 This means that P4NIPS is working correctly.
 
-Kill the tmux session to proceed to the experimentation.
-Press `CTRL + B + :`, then type `kill-session` and press `Enter`.
+Kill the tmux session to proceed to the experimentation:
+press `CTRL + B + :`, then type `kill-session` and press `Enter`.
+
+## General observations and possible problems
+
+If any of these steps fail for some reason, follow these steps to troubleshoot
+it.
+
+- **Kill the switch**: Kill your tmux session, run `./kill_switch.sh`
+and start again.
 
 # Experiments
 
 P4NIPS is created as proof-of-concept that blocks malicious data at transmission
 time. Here are the demonstration of its functionalities.
+
+Start the switch (if not started alredy) following the steps from
+[Start the switch](#start-the-switch).
 
 Create a new tmux session to run the experiments:
 ```bash
@@ -310,6 +321,14 @@ Result in the right pane:
 ```
 
 No packets arrive at the target port.
+
+## General observations and possible problems
+
+If any of these steps fail for some reason, follow these steps to troubleshoot
+it.
+
+- **Kill the switch**: Kill your tmux session, run `./kill_switch.sh`
+and start again.
 
 # LICENSE
 
