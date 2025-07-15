@@ -44,6 +44,7 @@ p4nips
 ├── kill_switch.sh      # Bash script to kill the tmux session that runs the switch
 ├── p4_build.sh         # Bash script to compile the P4 code
 ├── ports.json          # JSON file that describes the port mapping to virtual ethernet interfaces
+├── LICENSE             # GNU General Public License v3.0
 ├── README.md           # Description of this repository
 ├── requirements.txt    # Python script dependencies
 ├── rules
@@ -308,5 +309,5 @@ Result in the right pane:
 
 # LICENSE
 
-Apresente a licença.
-
+This software is licensed under GNU General Public License v3.0,
+check [LICENSE](LICENSE) for more information.
