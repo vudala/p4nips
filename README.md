@@ -25,10 +25,8 @@ Thise README.md is organized in the following sections:
 - Security precautions: Cautions that the user must take before using the tool.
 - Installation: Steps to install and configure P4NIPS.
 - Minimum test: Describes steps to test the minimum functionalities of the tool.
-    Experimentos: Explicação dos argumentos de linha de comando e exemplos de uso.
-    Estrutura do Código: Breve visão geral da organização do código-fonte.
-    Extensibilidade: Como adicionar novas fontes e novos exportadores.
-    Licença: Informações sobre a licença do projeto.
+- Experiments: Steps on how to reproduce the experiments of the paper.
+- LICENSE: Legal disclaimers.
 
 
 ## File structure
