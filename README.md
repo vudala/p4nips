@@ -303,7 +303,8 @@ Result in the right pane:
 
 ## Claim #2
 
-P4NIPS blocks malicious traffic, we are going to send malicious traffic to P4NIPS, and verify its dropped.
+P4NIPS blocks malicious traffic.
+We are going to send malicious traffic to P4NIPS, and verify its dropped.
 
 In the left pane cancel the running process, and start sending web traffic to
 P4NIPS using the same command as before, but with a different pcap with malicious
