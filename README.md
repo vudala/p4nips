@@ -265,7 +265,10 @@ tmux
 Then split it in two panes pressing `CTRL + B + %`. To switch between panes press
 `CTRL + B + Left Arrow` or `CTRL + B + Right Arrow`.
 
-## Routes packets normally
+## Claim #1
+
+The tool routes packets as any commercial grade switch should.
+
 In the right pane, start count the packet that are redirected to port 10 in the
 last secod, using:
 ```bash
@@ -298,9 +301,9 @@ Result in the right pane:
 ...
 ```
 
-## Blocks malicious traffic
+## Claim #2
 
-Now, we are going to send malicious traffic to P4NIPS, and verify its dropped.
+P4NIPS blocks malicious traffic, we are going to send malicious traffic to P4NIPS, and verify its dropped.
 
 In the left pane cancel the running process, and start sending web traffic to
 P4NIPS using the same command as before, but with a different pcap with malicious
