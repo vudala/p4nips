@@ -185,6 +185,7 @@ This section describes the steps to check if the previous steps succeeded.
 We are going to send some packets through P4NIPS and see if they flow correctly.
 
 All of the commands will be issued through tmux sessions for organization.
+If you are new to tmux, I encourage you to read [this cheatsheet](https://tmuxcheatsheet.com/)  for help
 
 ## Start the switch
 Start the switch:
@@ -247,8 +248,10 @@ press `CTRL + B + :`, then type `kill-session` and press `Enter`.
 If any of these steps fail for some reason, follow these steps to troubleshoot
 it.
 
-- **Kill the switch**: Kill your tmux session, run `./kill_switch.sh`
-and start again.
+- **Start switch failure**: In some cases, due to system instability of the
+simulation platform, the switch might take a way longer time than usual or
+not start at all. In these cases, kill the switch `./kill_switch.sh` and start
+again from [Start the switch](#start-the-switch).
 
 # Experiments
 
